@@ -81,10 +81,18 @@ const updateOne = (data, id) => {
     .then((result) => result)
 }
 
+const deleteOne = (id) => {
+  return connection.promise().query(
+    'DELETE FROM movies WHERE id = ?',
+    [id])
+    .then((result) => 'Movie deleted successfully')
+}
+
 module.exports = {
   findMany,
   findOne,
   validateMoviesData,
   createOne,
-  updateOne
+  updateOne,
+  deleteOne
 }

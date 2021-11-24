@@ -65,5 +65,13 @@ moviesRouter.put("/:id", (req, res) => {
       })
   }
 })
+moviesRouter.delete("/:id", (req, res) => {
+  Movies.deleteOne(req.params.id)
+    .then((result) => {
+      res.json(result);
+    }).catch((err) => {
+      res.send('Error deleting movies from database');
+    })
+});
 
 module.exports = moviesRouter;
