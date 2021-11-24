@@ -24,45 +24,8 @@ connexion.connect((err) => {
 
 // Before was the post route for movie
 
-app.put("/api/movies/:id", (req, res) => {
-  console.log("API / Movies / id to put")
-  const movieId = req.params.id;
-  const { title, director, year, color, duration } = req.body;
+// Before was the put route for movies
 
-  const { error } = Joi.object({
-    title: Joi.string().max(255),
-    director: Joi.string().max(255),
-    year: Joi.number().integer().min(1888),
-    color: Joi.number().min(0),
-    duration: Joi.number().integer().min(1),
-  }).validate({ title, director, year, color, duration }, { abortEarly: false });
-
-  if (error) {
-    res.status(422).json({ validationErrors: error.details });
-  } else {
-
-    connexion.promise().query(
-      'SELECT * FROM movies WHERE id = ?',
-      [movieId])
-      .then((result) => {
-        if (result[0].length) {
-          console.log(req.body)
-          connexion.promise().query(
-            'UPDATE movies SET ? WHERE id = ?',
-            [req.body, movieId])
-            .then((result) => {
-              res.send({ id: movieId, ...req.body })
-            })
-            .catch((err) => {
-              res.send("Error updating the movies")
-            })
-        }
-        else res.status(404).send('Movie not found');
-      }).catch((err) => {
-        res.send('Error retrieving data from database');
-      })
-  }
-})
 
 app.get('/api/users/:id', (req, res) => {
   const userId = req.params.id;
@@ -78,17 +41,7 @@ app.get('/api/users/:id', (req, res) => {
     })
 });
 
-app.get('/api/users', (req, res) => {
-  let query = 'SELECT * FROM users';
-  if (req.query.language) query += ' WHERE language = ?'
-
-  connexion.promise().query(query, [req.query.language])
-    .then((result) => {
-      res.json(result[0]);
-    }).catch((err) => {
-      res.send('Error retrieving data from database');
-    })
-});
+// Before was the users route
 
 app.post('/api/users', (req, res) => {
   const { firstname, lastname, email, city, language } = req.body;

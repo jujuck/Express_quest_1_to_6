@@ -26,7 +26,7 @@ moviesRouter.get('/:id', (req, res) => {
 });
 
 moviesRouter.post('/', (req, res) => {
-  const error = Movies.validateMoviesData(req.body);
+  const error = Movies.validateMoviesData(req.body, false);
   console.log(error)
   if (error) res.status(422).json({ validationErrors: error.details })
   Movies.createOne(req.body)
