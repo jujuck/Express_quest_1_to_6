@@ -2,7 +2,6 @@ const moviesRouter = require('express').Router();
 const Movies = require('../models/movies');
 
 moviesRouter.get('/', (req, res) => {
-  console.log("GEt Movies")
   const { max_duration, color } = req.query;
   console.log(color)
   Movies.findMany({ filters: { max_duration, color } })
@@ -26,21 +25,24 @@ moviesRouter.get('/:id', (req, res) => {
 });
 
 moviesRouter.post('/', (req, res) => {
-  const error = Movies.validateMoviesData(req.body, false);
+  const error = Movies.validateMoviesData(req.body);
   console.log(error)
-  if (error) res.status(422).json({ validationErrors: error.details })
-  Movies.createOne(req.body)
-    .then((result) => {
-      res.send(result);
-    })
-    .catch((err) => {
-      res.send('Error saving the movie');
-    })
+  if (error) {
+    res.status(422).json({ validationErrors: error.details })
+  } else {
+    Movies.createOne(req.body)
+      .then((result) => {
+        res.send(result);
+      })
+      .catch((err) => {
+        res.send('Error saving the movie');
+      })
+  }
 })
 
 moviesRouter.put("/:id", (req, res) => {
   // Vérification de la validité de la donnée envoyée
-  const error = Movies.validateMoviesData(req.body);
+  const error = Movies.validateMoviesData(req.body, false);
   if (error) res.status(422).json({ validationErrors: error.details })
 
   // Vérification si le film exist

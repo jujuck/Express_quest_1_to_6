@@ -20,5 +20,22 @@ usersRouter.get('/:id', (req, res) => {
       res.send('Error retrieving data from database');
     })
 });
+usersRouter.post('/', (req, res) => {
+  const error = Users.validateUsersData(req.body);
+  console.log("POST")
+  console.log(error)
+  if (error.details) {
+    res.status(422).json({ validationErrors: error.details })
+  } else {
+    Users.createOne(req.body)
+      .then((result) => {
+        res.send(result);
+      })
+      .catch((err) => {
+        console.log(err)
+        res.send('Error saving the user');
+      })
+  }
+})
 
 module.exports = usersRouter;

@@ -10,11 +10,11 @@ const Joi = require('joi');
 const validateUsersData = (data, forCreation = true) => {
   const presence = forCreation ? 'required' : 'optional';
   return Joi.object({
-    email: Joi.string().email().max(255).required(presence),
-    firstname: Joi.string().max(255).required(presence),
-    lastname: Joi.string().max(255).required(presence),
-    city: Joi.string().allow(null, '').max(255),
-    language: Joi.string().allow(null, '').max(255),
+    email: Joi.string().email().max(255).presence(presence),
+    firstname: Joi.string().max(255).presence(presence),
+    lastname: Joi.string().max(255).presence(presence),
+    city: Joi.string().allow(null, '').max(255).presence('optional'),
+    language: Joi.string().allow(null, '').max(255).presence('optional'),
   }).validate(data, { abortEarly: false });
 };
 
@@ -56,13 +56,16 @@ const findOne = (id) => {
  * @param {*} param0
  * @returns
  */
-const createOne = ({ title, director, year, color, duration }) => {
+const createOne = ({ email, firstname, lastname, city, language }) => {
   return connection.promise().query(
-    'INSERT INTO movies(title, director, year, color, duration) VALUES (?, ?, ?, ?, ?)',
-    [title, director, year, color, duration])
+    'INSERT INTO users (email, firstname, lastname, city, language) VALUES (?, ?, ?, ?, ?)',
+    [email, firstname, lastname, city, language])
     .then(([result]) => {
+      console.log(result)
       const id = result.insertId;
-      return { id, title, director, year, color, duration };
+      console.log("id")
+      console.log(id)
+      return { id, email, firstname, lastname, city, language };
     })
 }
 
@@ -74,7 +77,7 @@ const createOne = ({ title, director, year, color, duration }) => {
  */
 const updateOne = (data, id) => {
   return connection.promise().query(
-    'UPDATE movies SET ? WHERE id = ?',
+    'UPDATE users SET ? WHERE id = ?',
     [data, id])
     .then((result) => result)
 }
