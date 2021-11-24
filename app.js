@@ -6,6 +6,7 @@ const { setupRoutes } = require('./routes');
 
 const port = process.env.PORT || 3000;
 
+app.use(express.json());
 setupRoutes(app);
 
 connexion.connect((err) => {
@@ -16,21 +17,8 @@ connexion.connect((err) => {
   }
 })
 
-app.use(express.json());
 
-app.get('/api/movies/:id', (req, res) => {
-  const movieId = req.params.id;
-
-  connexion.promise().query(
-    'SELECT * FROM users WHERE id = ?',
-    [movieId])
-    .then((result) => {
-      if (result[0].length) res.status(201).json(result[0]);
-      else res.status(404).send('Movie not found');
-    }).catch((err) => {
-      res.send('Error retrieving data from database');
-    })
-});
+// Before was the route api/movies/:id
 
 // Before was the /api/movies route
 

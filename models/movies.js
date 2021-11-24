@@ -1,23 +1,32 @@
 const connection = require('../db-config');
 
 const findMany = ({ filters: { color, max_duration } }) => {
+  console.log(color)
   let query = 'SELECT * FROM movies';
-  let value = [];
+  let sqlValues = [];
 
   if (color && max_duration) {
     query += ' WHERE color = ? AND duration = ?';
-    value.push(color, max_duration)
+    sqlValues.push(color, max_duration)
   } else if (color) {
     query += ' WHERE color = ?';
-    value.push(color)
+    sqlValues.push(color)
   } else if (max_duration) {
     query += ' WHERE duration < ?';
-    value.push(max_duration)
+    sqlValues.push(max_duration)
   }
   return connection.promise().query(query, sqlValues)
     .then(([results]) => results)
 };
 
+const findOne = (id) => {
+  return connection.promise().query(
+    'SELECT * FROM users WHERE id = ?',
+    [id])
+    .then((results) => results)
+}
+
 module.exports = {
-  findMany
+  findMany,
+  findOne
 }

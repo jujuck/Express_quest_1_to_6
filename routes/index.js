@@ -1,7 +1,7 @@
-const movies = require('./movies');
+const moviesRouter = require('./movies');
 
 const setupRoutes = (app) => {
-  app.use('api/movies', moviesRouter);
+  app.use('/api/movies', moviesRouter);
 };
 
 module.exports = {
