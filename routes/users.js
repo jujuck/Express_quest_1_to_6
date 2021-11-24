@@ -22,8 +22,6 @@ usersRouter.get('/:id', (req, res) => {
 });
 usersRouter.post('/', (req, res) => {
   const error = Users.validateUsersData(req.body);
-  console.log("POST")
-  console.log(error)
   if (error.details) {
     res.status(422).json({ validationErrors: error.details })
   } else {
@@ -37,5 +35,38 @@ usersRouter.post('/', (req, res) => {
       })
   }
 })
+
+usersRouter.put("/:id", (req, res) => {
+  // Vérification de la validité de la donnée envoyée
+  const error = Users.validateUsersData(req.body, false);
+  if (error.details) {
+    res.status(422).json({ validationErrors: error.details })
+  } else {
+    // Vérification si le film exist
+    Users.findOne(req.params.id)
+      .then((user) => {
+        if (user) {
+          Users.updateOne(req.body, req.params.id)
+            .then((result) => {
+              res.status(200).json({ ...user[0][0], ...req.body });
+            });
+          return;
+        }
+        return res.status(404).json({ msg: 'Record not found' })
+      })
+      .catch((err) => {
+        res.status(500).send('Error updating the movie');
+      })
+  }
+})
+
+usersRouter.delete("/:id", (req, res) => {
+  Users.deleteOne(req.params.id)
+    .then((result) => {
+      res.json(result);
+    }).catch((err) => {
+      res.send('Error deleting users from database');
+    })
+});
 
 module.exports = usersRouter;

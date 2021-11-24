@@ -61,10 +61,7 @@ const createOne = ({ email, firstname, lastname, city, language }) => {
     'INSERT INTO users (email, firstname, lastname, city, language) VALUES (?, ?, ?, ?, ?)',
     [email, firstname, lastname, city, language])
     .then(([result]) => {
-      console.log(result)
       const id = result.insertId;
-      console.log("id")
-      console.log(id)
       return { id, email, firstname, lastname, city, language };
     })
 }
@@ -82,10 +79,18 @@ const updateOne = (data, id) => {
     .then((result) => result)
 }
 
+const deleteOne = (id) => {
+  return connection.promise().query(
+    'DELETE FROM users WHERE id = ?',
+    [id])
+    .then((result) => 'User deleted successfully')
+}
+
 module.exports = {
   findMany,
   findOne,
   validateUsersData,
   createOne,
-  updateOne
+  updateOne,
+  deleteOne
 }
