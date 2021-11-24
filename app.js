@@ -2,8 +2,11 @@ const connexion = require('./db-config');
 const express = require('express');
 const Joi = require('joi');
 const app = express();
+const { setupRoutes } = require('./routes');
 
 const port = process.env.PORT || 3000;
+
+setupRoutes(app);
 
 connexion.connect((err) => {
   if (err) {
@@ -29,28 +32,7 @@ app.get('/api/movies/:id', (req, res) => {
     })
 });
 
-app.get('/api/movies', (req, res) => {
-  let query = 'SELECT * FROM movies';
-  let value = [];
-
-  if (req.query.color && req.query.max_duration) {
-    query += ' WHERE color = ? AND duration = ?';
-    value.push(req.query.color, req.query.max_duration)
-  } else if (req.query.color) {
-    query += ' WHERE color = ?';
-    value.push(req.query.color)
-  } else if (req.query.max_duration) {
-    query += ' WHERE duration < ?';
-    value.push(req.query.max_duration)
-  }
-
-  connexion.promise().query(query, value)
-    .then((result) => {
-      res.status(200).json(result[0]);
-    }).catch((err) => {
-      res.send('Error retrieving data from database');
-    })
-});
+// Before was the /api/movies route
 
 app.post('/api/movies', (req, res) => {
   const { title, director, year, color, duration } = req.body;

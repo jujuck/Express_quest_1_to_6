@@ -14,7 +14,8 @@ const findMany = ({ filters: { color, max_duration } }) => {
     query += ' WHERE duration < ?';
     value.push(max_duration)
   }
-  return connection.promise().query(query, sqlValues).then(([results]) => results);
+  return connection.promise().query(query, sqlValues)
+    .then(([results]) => results)
 };
 
 module.exports = {
