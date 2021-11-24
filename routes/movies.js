@@ -25,4 +25,17 @@ moviesRouter.get('/:id', (req, res) => {
     })
 });
 
+moviesRouter.post('/', (req, res) => {
+  const error = Movies.validateMoviesData(req.body);
+  console.log(error)
+  if (error) res.status(422).json({ validationErrors: error.details })
+  Movies.createOne(req.body)
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((err) => {
+      res.send('Error saving the movie');
+    })
+})
+
 module.exports = moviesRouter;

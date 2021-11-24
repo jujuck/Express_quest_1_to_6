@@ -22,33 +22,7 @@ connexion.connect((err) => {
 
 // Before was the /api/movies route
 
-app.post('/api/movies', (req, res) => {
-  const { title, director, year, color, duration } = req.body;
-
-  const { error } = Joi.object({
-    title: Joi.string().max(255),
-    director: Joi.string().max(255),
-    year: Joi.number().integer().min(1888).required(),
-    color: Joi.number().required().min(0),
-    duration: Joi.number().integer().min(1).required(),
-  }).validate({ title, director, year, color, duration }, { abortEarly: false });
-
-  if (error) {
-    res.status(422).json({ validationErrors: error.details });
-  } else {
-    connexion.promise().query(
-      'INSERT INTO movies(title, director, year, color, duration) VALUES (?, ?, ?, ?, ?)',
-      [title, director, year, color, duration])
-      .then((result) => {
-        console.log(result[0].ResultSetHeader)
-        const movies = { id: result[0].insertId, title, director, year, color, duration }
-        res.send(movies);
-      })
-      .catch((err) => {
-        res.send('Error saving the movie');
-      })
-  }
-})
+// Before was the post route for movie
 
 app.put("/api/movies/:id", (req, res) => {
   console.log("API / Movies / id to put")
