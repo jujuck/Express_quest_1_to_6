@@ -53,6 +53,11 @@ const findOne = (id) => {
     .then((results) => results)
 }
 
+/**
+ * Method pour ajouter un movie à la DB
+ * @param {*} param0
+ * @returns
+ */
 const createOne = ({ title, director, year, color, duration }) => {
   return connection.promise().query(
     'INSERT INTO movies(title, director, year, color, duration) VALUES (?, ?, ?, ?, ?)',
@@ -63,9 +68,23 @@ const createOne = ({ title, director, year, color, duration }) => {
     })
 }
 
+/**
+ * Method pour mettre à jour un movies via son ID
+ * @param {*} data
+ * @param {*} id
+ * @returns
+ */
+const updateOne = (data, id) => {
+  return connection.promise().query(
+    'UPDATE movies SET ? WHERE id = ?',
+    [data, id])
+    .then((result) => result)
+}
+
 module.exports = {
   findMany,
   findOne,
   validateMoviesData,
-  createOne
+  createOne,
+  updateOne
 }

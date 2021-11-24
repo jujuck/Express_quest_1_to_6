@@ -38,4 +38,29 @@ moviesRouter.post('/', (req, res) => {
     })
 })
 
+moviesRouter.put("/:id", (req, res) => {
+  // Vérification de la validité de la donnée envoyée
+  const error = Movies.validateMoviesData(req.body);
+  if (error) res.status(422).json({ validationErrors: error.details })
+
+  // Vérification si le film exist
+  Movies.findOne(req.params.id)
+    .then((movie) => {
+      if (movie) {
+        existingMovie = movie;
+        console.log("Updating")
+        Movies.updateOne(req.body, req.params.id)
+          .then((result) => {
+            res.status(200).json({ ...movie[0][0], ...req.body });
+          });
+        return;
+      }
+      return res.status(404).json({ msg: 'Record not found' })
+    })
+    .catch((err) => {
+      res.status(500).send('Error updating the movie');
+    })
+
+})
+
 module.exports = moviesRouter;
