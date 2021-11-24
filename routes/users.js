@@ -11,4 +11,14 @@ usersRouter.get('/', (req, res) => {
     })
 })
 
+usersRouter.get('/:id', (req, res) => {
+  Users.findOne(req.params.id)
+    .then((result) => {
+      if (result[0].length) res.status(201).json(result[0]);
+      else res.status(404).send('User not found');
+    }).catch((err) => {
+      res.send('Error retrieving data from database');
+    })
+});
+
 module.exports = usersRouter;

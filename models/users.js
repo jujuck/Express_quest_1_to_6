@@ -26,7 +26,6 @@ const validateUsersData = (data, forCreation = true) => {
 const findMany = ({ filters: { language } }) => {
   let query = 'SELECT * FROM users';
   let sqlValues = [];
-  console.log(language)
 
   if (language) {
     query += ' WHERE language = ?';
@@ -47,7 +46,7 @@ const findMany = ({ filters: { language } }) => {
  */
 const findOne = (id) => {
   return connection.promise().query(
-    'SELECT * FROM movies WHERE id = ?',
+    'SELECT * FROM users WHERE id = ?',
     [id])
     .then((results) => results)
 }
