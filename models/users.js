@@ -72,11 +72,13 @@ const findOne = (id) => {
  * @param {*} param0
  * @returns
  */
-const createOne = ({ email, firstname, lastname, city, language }) => {
+const createOne = ({ email, firstname, lastname, city, language, hashedPassword }) => {
   return connection.promise().query(
-    'INSERT INTO users (email, firstname, lastname, city, language) VALUES (?, ?, ?, ?, ?)',
-    [email, firstname, lastname, city, language])
+    'INSERT INTO users (email, firstname, lastname, city, language, hashedPassword) VALUES (?, ?, ?, ?, ?, ?)',
+    [email, firstname, lastname, city, language, hashedPassword])
     .then(([result]) => {
+      console.log("Create One")
+      console.log(result)
       const id = result.insertId;
       return { id, email, firstname, lastname, city, language };
     })

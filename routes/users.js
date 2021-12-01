@@ -25,14 +25,24 @@ usersRouter.post('/', (req, res) => {
   if (error.details) {
     res.status(422).json({ validationErrors: error.details })
   } else {
-    Users.createOne(req.body)
-      .then((result) => {
-        res.send(result);
+    Users.hashPassword(req.body.password)
+      .then((hashedPassword) => {
+        const newUser = { ...req.body, ...{ hashedPassword } }
+        delete newUser.password;
+
+        Users.createOne(newUser)
+          .then((result) => {
+            res.send(result);
+          })
+          .catch((err) => {
+            res.send('Error saving the user');
+          })
       })
       .catch((err) => {
-        console.log(err)
-        res.send('Error saving the user');
-      })
+        console.error("Hashing Error")
+      });
+
+
   }
 })
 
