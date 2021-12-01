@@ -68,6 +68,18 @@ const findOne = (id) => {
 }
 
 /**
+ * Methode pour retrouver un password via son email
+ * @param {*} id (req.params)
+ * @returns
+ */
+const findPasswordFromEmail = (email) => {
+  return connection.promise().query(
+    'SELECT hashedPassword FROM users WHERE email = ?',
+    [email])
+    .then((results) => results)
+}
+
+/**
  * Method pour ajouter un user à la DB
  * @param {*} param0
  * @returns
@@ -77,8 +89,6 @@ const createOne = ({ email, firstname, lastname, city, language, hashedPassword 
     'INSERT INTO users (email, firstname, lastname, city, language, hashedPassword) VALUES (?, ?, ?, ?, ?, ?)',
     [email, firstname, lastname, city, language, hashedPassword])
     .then(([result]) => {
-      console.log("Create One")
-      console.log(result)
       const id = result.insertId;
       return { id, email, firstname, lastname, city, language };
     })
@@ -112,5 +122,6 @@ module.exports = {
   updateOne,
   deleteOne,
   hashPassword,
-  verifyPassword
+  verifyPassword,
+  findPasswordFromEmail
 }
