@@ -84,10 +84,10 @@ const findPasswordFromEmail = (email) => {
  * @param {*} param0
  * @returns
  */
-const createOne = ({ email, firstname, lastname, city, language, hashedPassword }) => {
+const createOne = ({ email, firstname, lastname, city, language, hashedPassword, token }) => {
   return connection.promise().query(
-    'INSERT INTO users (email, firstname, lastname, city, language, hashedPassword) VALUES (?, ?, ?, ?, ?, ?)',
-    [email, firstname, lastname, city, language, hashedPassword])
+    'INSERT INTO users (email, firstname, lastname, city, language, hashedPassword, token) VALUES (?, ?, ?, ?, ?, ?, ?)',
+    [email, firstname, lastname, city, language, hashedPassword, token])
     .then(([result]) => {
       const id = result.insertId;
       return { id, email, firstname, lastname, city, language };

@@ -1,5 +1,6 @@
 const usersRouter = require('express').Router();
 const Users = require('../models/users');
+const { calculateToken } = require('../helpers/users');
 
 usersRouter.get('/', (req, res) => {
   const { language } = req.query;
@@ -27,7 +28,9 @@ usersRouter.post('/', (req, res) => {
   } else {
     Users.hashPassword(req.body.password)
       .then((hashedPassword) => {
-        const newUser = { ...req.body, ...{ hashedPassword } }
+        const token = calculateToken(req.body.email);
+        const newUser = { ...req.body, ...{ hashedPassword }, ...{ token } }
+        console.log(newUser)
         delete newUser.password;
 
         Users.createOne(newUser)
@@ -56,7 +59,9 @@ usersRouter.put("/:id", (req, res) => {
     Users.findOne(req.params.id)
       .then((user) => {
         if (user) {
-          Users.updateOne(req.body, req.params.id)
+          const token = calculateToken(req.body.email)
+          delete req.body.password;
+          Users.updateOne({ ...req.body, ...{ token } }, req.params.id)
             .then((result) => {
               res.status(200).json({ ...user[0][0], ...req.body });
             });
