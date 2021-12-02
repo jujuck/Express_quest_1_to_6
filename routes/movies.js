@@ -1,5 +1,6 @@
 const moviesRouter = require('express').Router();
 const Movies = require('../models/movies');
+const Users = require('../models/users');
 
 moviesRouter.get('/', (req, res) => {
   const { max_duration, color } = req.query;
@@ -25,18 +26,30 @@ moviesRouter.get('/:id', (req, res) => {
 });
 
 moviesRouter.post('/', (req, res) => {
+  console.log("Post Movie")
+  console.log(req.cookies)
   const error = Movies.validateMoviesData(req.body);
   console.log(error)
   if (error) {
     res.status(422).json({ validationErrors: error.details })
   } else {
-    Movies.createOne(req.body)
-      .then((result) => {
-        res.send(result);
-      })
-      .catch((err) => {
-        res.send('Error saving the movie');
-      })
+    if (req.cookies.user_token) {
+      Users.findOnebyToken(req.cookies.user_token)
+        .then(result => {
+          console.log(result)
+          const user_id = { user_id: result[0][0].id }
+          Movies.createOne({ ...req.body, ...user_id })
+            .then((result) => {
+              res.send(result);
+            })
+            .catch((err) => {
+              res.send('Error saving the movie');
+            })
+        })
+        .catch(err => console.error(err))
+    } else {
+      res.status(401).send('Invalid users')
+    }
   }
 })
 

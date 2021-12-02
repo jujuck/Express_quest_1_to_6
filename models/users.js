@@ -68,6 +68,18 @@ const findOne = (id) => {
 }
 
 /**
+ * Methode pour retrouver un user via son id
+ * @param {*} id (req.params)
+ * @returns
+ */
+const findOnebyToken = (token) => {
+  return connection.promise().query(
+    'SELECT id FROM users WHERE token = ?',
+    [token])
+    .then((results) => results)
+}
+
+/**
  * Methode pour retrouver un password via son email
  * @param {*} id (req.params)
  * @returns
@@ -123,5 +135,6 @@ module.exports = {
   deleteOne,
   hashPassword,
   verifyPassword,
-  findPasswordFromEmail
+  findPasswordFromEmail,
+  findOnebyToken
 }

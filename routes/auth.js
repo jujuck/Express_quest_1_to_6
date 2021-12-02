@@ -6,7 +6,6 @@ authRouter.get('/checkCredentials', (req, res) => {
   const { email, password } = req.body;
   Users.findPasswordFromEmail(email)
     .then((results) => {
-      console.log(results[0][0])
       if (!results[0][0]) {
         res.status(401).send('Invalid Credential')
       } else {
