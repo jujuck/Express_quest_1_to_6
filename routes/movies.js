@@ -1,18 +1,24 @@
 const moviesRouter = require('express').Router();
+const jwt_decode = require('jwt-decode');
 const Movies = require('../models/movies');
-const Users = require('../models/users');
 
 moviesRouter.get('/', (req, res) => {
   const { max_duration, color } = req.query;
-  console.log(color)
-  Movies.findMany({ filters: { max_duration, color } })
-    .then((movies) => {
-      res.json(movies);
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).send('Error retrieving movies from databases')
-    })
+  if (req.cookies.user_token) {
+    const { id } = jwt_decode(req.cookies.user_token)
+    Movies.findMany({ filters: { max_duration, color, id } })
+      .then((movies) => {
+        res.json(movies);
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(500).send('Error retrieving movies from databases')
+      })
+  } else {
+    res.status(401).send('invalid users')
+  }
+
+
 });
 
 moviesRouter.get('/:id', (req, res) => {
@@ -26,27 +32,25 @@ moviesRouter.get('/:id', (req, res) => {
 });
 
 moviesRouter.post('/', (req, res) => {
-  console.log("Post Movie")
-  console.log(req.cookies)
   const error = Movies.validateMoviesData(req.body);
-  console.log(error)
   if (error) {
     res.status(422).json({ validationErrors: error.details })
   } else {
     if (req.cookies.user_token) {
-      Users.findOnebyToken(req.cookies.user_token)
-        .then(result => {
-          console.log(result)
-          const user_id = { user_id: result[0][0].id }
-          Movies.createOne({ ...req.body, ...user_id })
-            .then((result) => {
-              res.send(result);
-            })
-            .catch((err) => {
-              res.send('Error saving the movie');
-            })
-        })
-        .catch(err => console.error(err))
+      const decodeToken = jwt_decode(req.cookies.user_token)
+      console.log(decodeToken);
+      if (decodeToken.id) {
+        const user_id = { user_id: decodeToken.id }
+        Movies.createOne({ ...req.body, ...user_id })
+          .then((result) => {
+            res.send(result);
+          })
+          .catch((err) => {
+            res.send('Error saving the movie');
+          })
+      } else {
+        res.status(401).send('Invalid users')
+      }
     } else {
       res.status(401).send('Invalid users')
     }

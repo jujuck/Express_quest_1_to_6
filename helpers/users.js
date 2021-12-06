@@ -1,10 +1,9 @@
-const crypto = require('crypto');
-const { getMaxListeners } = require('process');
+const jwt = require('jsonwebtoken')
 
 const PRIVATE_KEY = "MySuperPrivateKeyForMyQuest";
 
-const calculateToken = (userEmail = "") => {
-  return crypto.createHash('md5').update(userEmail + PRIVATE_KEY).digest("hex")
+const calculateToken = (userEmail = "", id) => {
+  return jwt.sign({ email: userEmail, id: id }, PRIVATE_KEY);
 }
 
 module.exports = { calculateToken };

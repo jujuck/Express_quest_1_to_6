@@ -4,15 +4,17 @@ const Users = require('../models/users');
 
 authRouter.get('/checkCredentials', (req, res) => {
   const { email, password } = req.body;
-  Users.findPasswordFromEmail(email)
-    .then((results) => {
-      if (!results[0][0]) {
+  Users.findByEmail(email)
+    .then((user) => {
+      console.log(user)
+      if (!user) {
         res.status(401).send('Invalid Credential')
       } else {
-        Users.verifyPassword(password, results[0][0].hashedPassword)
+        const { hashedPassword, id } = user;
+        Users.verifyPassword(password, hashedPassword)
           .then((results) => {
             if (results) {
-              res.cookie('user_token', calculateToken(email));
+              res.cookie('user_token', calculateToken(email, id));
               res.send();
             } else {
               res.status(401).send('Invalid Credential')

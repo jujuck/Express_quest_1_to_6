@@ -84,11 +84,11 @@ const findOnebyToken = (token) => {
  * @param {*} id (req.params)
  * @returns
  */
-const findPasswordFromEmail = (email) => {
+const findByEmail = (email) => {
   return connection.promise().query(
-    'SELECT hashedPassword FROM users WHERE email = ?',
+    'SELECT hashedPassword, id FROM users WHERE email = ?',
     [email])
-    .then((results) => results)
+    .then((results) => results[0][0])
 }
 
 /**
@@ -135,6 +135,6 @@ module.exports = {
   deleteOne,
   hashPassword,
   verifyPassword,
-  findPasswordFromEmail,
+  findByEmail,
   findOnebyToken
 }

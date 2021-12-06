@@ -23,20 +23,24 @@ const validateMoviesData = (data, forCreation = true) => {
  * @param {*} filters: { req.query}
  * @returns
  */
-const findMany = ({ filters: { color, max_duration } }) => {
+const findMany = ({ filters: { color, max_duration, id } }) => {
   let query = 'SELECT * FROM movies';
   let sqlValues = [];
-
+  console.log(id)
   if (color && max_duration) {
-    query += ' WHERE color = ? AND duration = ?';
-    sqlValues.push(color, max_duration)
+    query += ' WHERE color = ? AND duration = ? AND user_id = ?';
+    sqlValues.push(color, max_duration, id)
   } else if (color) {
-    query += ' WHERE color = ?';
-    sqlValues.push(color)
+    query += ' WHERE color = ? AND user_id = ?';
+    sqlValues.push(color, id)
   } else if (max_duration) {
-    query += ' WHERE duration < ?';
-    sqlValues.push(max_duration)
+    query += ' WHERE duration < ? AND user_id = ?';
+    sqlValues.push(max_duration, id)
+  } else {
+    query += ' WHERE user_id = ?';
+    sqlValues.push(id)
   }
+
   return connection.promise().query(query, sqlValues)
     .then(([results]) => results)
 };
